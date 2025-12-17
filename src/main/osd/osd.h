@@ -172,6 +172,7 @@ typedef enum {
     OSD_RC_CHANNELS,
     OSD_CAMERA_FRAME,
     OSD_CUSTOM_FRAME,
+    OSD_CUSTOM_FRAME,
     OSD_EFFICIENCY,
     OSD_TOTAL_FLIGHTS,
     OSD_UP_DOWN_REFERENCE,
@@ -348,6 +349,11 @@ typedef struct osdConfig_s {
     uint8_t custom_frame_pos_y;               // Y position for the custom frame element
     uint8_t custom_frame_width;               // The width of the custom frame element
     uint8_t custom_frame_height;              // The height of the custom frame element
+    uint8_t custom_frame_enabled;             // Enable custom frame rendering
+    uint8_t custom_frame_pos_x;               // X position for the custom frame element
+    uint8_t custom_frame_pos_y;               // Y position for the custom frame element
+    uint8_t custom_frame_width;               // The width of the custom frame element
+    uint8_t custom_frame_height;              // The height of the custom frame element
     uint16_t framerate_hz;
     uint8_t cms_background_type;              // For supporting devices, determines whether the CMS background is transparent or opaque
     uint8_t stat_show_cell_value;
@@ -423,5 +429,7 @@ void osdSetVisualBeeperState(bool state);
 statistic_t *osdGetStats(void);
 bool osdNeedsAccelerometer(void);
 int osdPrintFloat(char *buffer, char leadingSymbol, float value, char *formatString, unsigned decimalPlaces, bool round, char trailingSymbol);
+
+void osdUpdateCustomFrameElement(void);
 
 void osdUpdateCustomFrameElement(void);

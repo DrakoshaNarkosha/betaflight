@@ -811,39 +811,6 @@ static void osdElementCoreTemperature(osdElementParms_t *element)
 }
 #endif // USE_ADC_INTERNAL
 
-static void osdBackgroundCustomFrame(osdElementParms_t *element)
-{
-    static const uint8_t cellWidthPx         = 12;
-    static const uint8_t cellHeightPx        = 18;
-    static const uint8_t frameWidthElements  = 4;
-    static const uint8_t frameHeightElements = 6;
-
-    // Calculate pixel coordinates
-    const uint8_t leftPx   = element->elemPosX - osdConfig()->custom_frame_width  / 2;
-    const uint8_t rightPx  = element->elemPosX + osdConfig()->custom_frame_width  / 2;
-    const uint8_t topPx    = element->elemPosY - osdConfig()->custom_frame_height / 2;
-    const uint8_t bottomPx = element->elemPosY + osdConfig()->custom_frame_height / 2;
-
-    // Calculate cell number
-    const uint8_t cellLeft   = leftPx   / cellWidthPx;
-    const uint8_t cellRight  = rightPx  / cellWidthPx;
-    const uint8_t cellTop    = topPx    / cellHeightPx;
-    const uint8_t cellBottom = bottomPx / cellHeightPx;
-
-    // Calculate subsel number
-    const uint8_t subLeft   = (leftPx   % cellWidthPx)  / (cellWidthPx  / frameWidthElements);
-    const uint8_t subRight  = (rightPx  % cellWidthPx)  / (cellWidthPx  / frameWidthElements);
-    const uint8_t subTop    = (topPx    % cellHeightPx) / (cellHeightPx / frameHeightElements);
-    const uint8_t subBottom = (bottomPx % cellHeightPx) / (cellHeightPx / frameHeightElements);
-
-    osdDisplayWriteChar(element, cellLeft, cellTop, DISPLAYPORT_SEVERITY_NORMAL, upperLeft[subLeft][subTop]);
-    osdDisplayWriteChar(element, cellLeft, cellBottom, DISPLAYPORT_SEVERITY_NORMAL, upperLeft[subLeft][subBottom]);
-    osdDisplayWriteChar(element, cellRight, cellTop, DISPLAYPORT_SEVERITY_NORMAL, upperLeft[subRight][subTop]);
-    osdDisplayWriteChar(element, cellRight, cellBottom, DISPLAYPORT_SEVERITY_NORMAL, upperLeft[subRight][subBottom]);
-
-    element->drawElement = false;
-}
-
 static void osdBackgroundCameraFrame(osdElementParms_t *element)
 {
     static enum {TOP, MIDDLE, BOTTOM} renderPhase = TOP;
