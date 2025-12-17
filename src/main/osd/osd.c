@@ -251,19 +251,13 @@ int osdPrintFloat(char *buffer, char leadingSymbol, float value, char *formatStr
 
 void osdUpdateCustomFrameElement(void)
 {
-    const uint8_t cols = osdConfig()->canvas_cols ? osdConfig()->canvas_cols : OSD_SD_COLS;
-    const uint8_t rows = osdConfig()->canvas_rows ? osdConfig()->canvas_rows : OSD_SD_ROWS;
-
-    const uint8_t x = MIN(osdConfig()->custom_frame_pos_x, cols ? cols - 1 : 0);
-    const uint8_t y = MIN(osdConfig()->custom_frame_pos_y, rows ? rows - 1 : 0);
-
     uint16_t profileFlags = 0;
     for (unsigned i = 1; i <= OSD_PROFILE_COUNT; i++) {
         profileFlags |= OSD_PROFILE_FLAG(i);
     }
 
     if (osdConfig()->custom_frame_enabled) {
-        osdElementConfigMutable()->item_pos[OSD_CUSTOM_FRAME] = OSD_POS(x, y) | profileFlags;
+        osdElementConfigMutable()->item_pos[OSD_CUSTOM_FRAME] = OSD_POS(osdConfig()->custom_frame_pos_x, osdConfig()->custom_frame_pos_y) | profileFlags;
     } else {
         osdElementConfigMutable()->item_pos[OSD_CUSTOM_FRAME] = 0;
     }

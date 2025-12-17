@@ -813,15 +813,33 @@ static void osdElementCoreTemperature(osdElementParms_t *element)
 
 static void osdBackgroundCustomFrame(osdElementParms_t *element)
 {
-    const uint8_t xpos = element->elemPosX;
-    const uint8_t ypos = element->elemPosY;
-    const uint8_t width = constrain(osdConfig()->custom_frame_width, OSD_CUSTOM_FRAME_MIN_WIDTH, OSD_CUSTOM_FRAME_MAX_WIDTH);
-    const uint8_t height = constrain(osdConfig()->custom_frame_height, OSD_CUSTOM_FRAME_MIN_HEIGHT, OSD_CUSTOM_FRAME_MAX_HEIGHT);
+    static const uint8_t cellWidthPx         = 12;
+    static const uint8_t cellHeightPx        = 18;
+    static const uint8_t frameWidthElements  = 4;
+    static const uint8_t frameHeightElements = 6;
 
-    osdDisplayWriteChar(element, xpos, ypos, DISPLAYPORT_SEVERITY_NORMAL, (char)SYM_CUSTOM_FRAME_TOP_LEFT);
-    osdDisplayWriteChar(element, xpos + width - 1, ypos, DISPLAYPORT_SEVERITY_NORMAL, (char)SYM_CUSTOM_FRAME_TOP_RIGHT);
-    osdDisplayWriteChar(element, xpos, ypos + height - 1, DISPLAYPORT_SEVERITY_NORMAL, (char)SYM_CUSTOM_FRAME_BOTTOM_LEFT);
-    osdDisplayWriteChar(element, xpos + width - 1, ypos + height - 1, DISPLAYPORT_SEVERITY_NORMAL, (char)SYM_CUSTOM_FRAME_BOTTOM_RIGHT);
+    // Calculate pixel coordinates
+    const uint8_t leftPx   = element->elemPosX - osdConfig()->custom_frame_width  / 2;
+    const uint8_t rightPx  = element->elemPosX + osdConfig()->custom_frame_width  / 2;
+    const uint8_t topPx    = element->elemPosY - osdConfig()->custom_frame_height / 2;
+    const uint8_t bottomPx = element->elemPosY + osdConfig()->custom_frame_height / 2;
+
+    // Calculate cell number
+    const uint8_t cellLeft   = leftPx   / cellWidthPx;
+    const uint8_t cellRight  = rightPx  / cellWidthPx;
+    const uint8_t cellTop    = topPx    / cellHeightPx;
+    const uint8_t cellBottom = bottomPx / cellHeightPx;
+
+    // Calculate subsel number
+    const uint8_t subLeft   = (leftPx   % cellWidthPx)  / (cellWidthPx  / frameWidthElements);
+    const uint8_t subRight  = (rightPx  % cellWidthPx)  / (cellWidthPx  / frameWidthElements);
+    const uint8_t subTop    = (topPx    % cellHeightPx) / (cellHeightPx / frameHeightElements);
+    const uint8_t subBottom = (bottomPx % cellHeightPx) / (cellHeightPx / frameHeightElements);
+
+    osdDisplayWriteChar(element, cellLeft, cellTop, DISPLAYPORT_SEVERITY_NORMAL, upperLeft[subLeft][subTop]);
+    osdDisplayWriteChar(element, cellLeft, cellBottom, DISPLAYPORT_SEVERITY_NORMAL, upperLeft[subLeft][subBottom]);
+    osdDisplayWriteChar(element, cellRight, cellTop, DISPLAYPORT_SEVERITY_NORMAL, upperLeft[subRight][subTop]);
+    osdDisplayWriteChar(element, cellRight, cellBottom, DISPLAYPORT_SEVERITY_NORMAL, upperLeft[subRight][subBottom]);
 
     element->drawElement = false;
 }
